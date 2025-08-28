@@ -62,8 +62,8 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	http.HandleFunc("/hello", helloHandler)
-	log.Printf("Backend running on :9000")
+	log.Printf("Backend running on :9001")
 	log.Printf("Default payload size: %d KB", DEFAULT_PAYLOAD_SIZE_KB)
 	log.Println("Use ?size=X query parameter to specify payload size in KB")
-	log.Fatal(http.ListenAndServe(":9000", nil))
+	log.Fatal(http.ListenAndServe(":9001", nil))
 }

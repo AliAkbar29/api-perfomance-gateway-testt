@@ -18,5 +18,5 @@ WORKDIR /app
 # copy binary hasil build
 COPY --from=builder /app/backend .
 
-EXPOSE 9000
+EXPOSE 9001
 CMD ["./backend"]
