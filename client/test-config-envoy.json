@@ -1,0 +1,105 @@
+{
+  "name": "API Gateway Load Test Suite",
+  "description": "Comprehensive load testing scenarios for API performance evaluation",
+  "loadtest_scenarios": [
+    {
+      "name": "light",
+      "display_name": "Light Load Test",
+      "url": "http://localhost:8082/hello",
+      "total_requests": 100,
+      "target_rps": 10,
+      "concurrency": 10,
+      "payload_size_kb": 1,
+      "description": "Light load test: 100 total requests distributed across 10 workers (each worker processes ~10 requests from shared queue) - 1KB payload"
+    },
+    {
+      "name": "medium",
+      "display_name": "Medium Load Test", 
+      "url": "http://localhost:8082/hello",
+      "total_requests": 500,
+      "target_rps": 50,
+      "concurrency": 50,
+      "payload_size_kb": 5,
+      "description": "Medium load test: 500 total requests distributed across 50 workers (each worker processes ~10 requests from shared queue) - 5KB payload"
+    },
+    {
+      "name": "high",
+      "display_name": "High Load Test",
+      "url": "http://localhost:8082/hello",
+      "total_requests": 1000,
+      "target_rps": 100,
+      "concurrency": 100,
+      "payload_size_kb": 10,
+      "description": "High load test: 1000 total requests distributed across 100 workers (each worker processes ~10 requests from shared queue) - 10KB payload"
+    },
+    {
+      "name": "peak",
+      "display_name": "Peak Load Test",
+      "url": "http://localhost:8082/hello",
+      "total_requests": 2000,
+      "target_rps": 200,
+      "concurrency": 200,
+      "payload_size_kb": 25,
+      "description": "Peak load test: 2000 total requests distributed across 200 workers (each worker processes ~10 requests from shared queue) - 25KB payload"
+    }
+  ],
+  "stabilitytest_scenarios": [
+    {
+      "name": "stability_light",
+      "display_name": "Stability Test - Light Load (100 RPS)",
+      "url": "http://localhost:8082/hello",
+      "target_rps": 100,
+      "start_concurrency": 20,
+      "concurrency_step": 20,
+      "stability_hold_count": 5,
+      "payload_size_kb": 2,
+      "description": "Light stability test: Start with 20 workers, increase by 20 workers per step until reaching 100 workers target, then hold stable for 5 cycles - 2KB payload"
+    },
+    {
+      "name": "stability_medium",
+      "display_name": "Stability Test - Medium Load (500 RPS)",
+      "url": "http://localhost:8082/hello",
+      "target_rps": 500,
+      "start_concurrency": 100,
+      "concurrency_step": 100,
+      "stability_hold_count": 8,
+      "payload_size_kb": 2,
+      "description": "Medium stability test: Start with 100 workers, increase by 100 workers per step until reaching 500 workers target, then hold stable for 8 cycles - 2KB payload"
+    },
+    {
+      "name": "stability_high",
+      "display_name": "Stability Test - High Load (1000 RPS)",
+      "url": "http://localhost:8082/hello",
+      "target_rps": 1000,
+      "start_concurrency": 200,
+      "concurrency_step": 200,
+      "stability_hold_count": 10,
+      "payload_size_kb": 2,
+      "description": "High stability test: Start with 200 workers, increase by 200 workers per step until reaching 1000 workers target, then hold stable for 10 cycles - 2KB payload"
+    },
+    {
+      "name": "stability_extended",
+      "display_name": "Stability Test - Extended Load (2000 RPS)",
+      "url": "http://localhost:8082/hello",
+      "target_rps": 150,
+      "start_concurrency": 40,
+      "concurrency_step": 40,
+      "stability_hold_count": 3,
+      "payload_size_kb": 1,
+      "description": "Extended stability test: Start with 50 workers, increase by 50 workers per step until reaching 2000 workers target, then hold stable for 3 cycles - 1KB payload"
+    }
+  ],
+  "metadata": {
+    "version": "2.1",
+    "created": "2025-08-21",
+    "updated": "2025-08-21",
+    "author": "API Performance Testing Team",
+    "notes": "Clarified difference between concurrency (workers) and sequential requests per worker",
+    "key_concepts": {
+      "concurrency": "Number of parallel workers (goroutines) running simultaneously",
+      "sequential_requests": "Each worker sends multiple requests one after another", 
+      "total_requests": "Sum of all requests across all workers",
+      "actual_behavior": "Example: 10 workers each send 10 requests sequentially = 100 total requests"
+    }
+  }
+}

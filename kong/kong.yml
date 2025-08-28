@@ -1,0 +1,21 @@
+# Versi format file konfigurasi Kong
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: backend_service
+    # Hostname 'backend' dari docker compose network 'kong-net'
+    url: http://backend:9000/
+
+    routes:
+      - name: backend_route
+        # PILIH SALAH SATU:
+        # 1) Lamun backend  bener-bener menyediakan endpoint /hello:
+        paths: ["/hello"]
+        strip_path: false   # /hello diteruskkan ka upstream apa adanya
+
+        # 2) (Alternatif) Klau mau map root:
+        # paths: ["/"]
+        # strip_path: false
+
+        path_handling: v1

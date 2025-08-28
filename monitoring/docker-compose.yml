@@ -1,0 +1,95 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    ports:
+      - "9001:9000"
+    networks:
+      - kong-net
+
+  kong:
+    image: kong:3.6
+    container_name: kong_vastar
+    restart: unless-stopped
+    volumes:
+      - ../kong/kong.yml:/etc/kong/kong.yml:ro
+      - ../kong/kong.conf:/etc/kong/kong.conf:ro
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: "/etc/kong/kong.yml"
+      KONG_PROXY_ACCESS_LOG: "/dev/stdout"
+      KONG_ADMIN_ACCESS_LOG: "/dev/stdout"
+      KONG_PROXY_ERROR_LOG: "/dev/stderr"
+      KONG_ADMIN_ERROR_LOG: "/dev/stderr"
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    depends_on:
+      - backend
+    networks:
+      - kong-net
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  envoy:
+    image: envoyproxy/envoy:v1.30-latest
+    container_name: envoy_vastar
+    environment:
+      ENVOY_CONCURRENCY: "16"   # ganti sama jumlah core mesin
+    volumes:
+      - ../envoy/envoy.yaml:/etc/envoy/envoy.yaml:ro
+    ports:
+      - "8082:8080"
+      - "9901:9901"
+    depends_on:
+      - backend
+    networks:
+      - kong-net
+
+  graphite:
+    image: graphiteapp/graphite-statsd:latest
+    container_name: graphite_vastar
+    ports:
+      - "8081:80"
+      - "2003-2004:2003-2004"
+      - "2023-2024:2023-2024"
+      - "8125:8125/udp"
+      - "8126:8126"
+    environment:
+      - GRAPHITE_TIME_ZONE=UTC
+    networks:
+      - kong-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana_vastar
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_PROVISIONING_PATH=/etc/grafana/provisioning
+    depends_on:
+      - graphite
+    networks:
+      - kong-net
+
+volumes:
+  grafana-storage:
+
+networks:
+  kong-net:
+    driver: bridge
